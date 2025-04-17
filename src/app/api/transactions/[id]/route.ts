@@ -2,15 +2,21 @@ import { connectDB } from "@/lib/db";
 import { Transaction } from "@/models/transaction";
 import { NextResponse } from "next/server";
 
-export async function PUT(req: Request, { params }: { params: { id: number } }) {
-  await connectDB();
-  const data = await req.json();
-  const updated = await Transaction.findByIdAndUpdate(params.id, data, { new: true });
-  return NextResponse.json(updated);
+interface Params {
+  params: {
+    id: string;
+  };
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: number } }) {
+export async function PUT(req: Request, { params }: Params) {
+  await connectDB();
+  const data = await req.json();
+  const updatedTransaction = await Transaction.findByIdAndUpdate(params.id, data, { new: true });
+  return NextResponse.json(updatedTransaction);
+}
+
+export async function DELETE(req: Request, { params }: Params) {
   await connectDB();
   await Transaction.findByIdAndDelete(params.id);
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ message: "Transaction deleted" });
 }
